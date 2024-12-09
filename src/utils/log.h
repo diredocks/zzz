@@ -8,10 +8,10 @@
 
 // ANSI color codes
 #define RESET_COLOR "\033[0m"
-#define INFO_COLOR "\033[32m"  // Green for INFO
-#define WARN_COLOR "\033[33m"  // Yellow for WARN
-#define ERROR_COLOR "\033[31m" // Red for ERROR
-#define DIMMED_COLOR "\033[2m" // Dimmed white for keys
+#define INFO_COLOR "\033[32m\033[1m"  // Green for INFO
+#define WARN_COLOR "\033[33m\033[1m"  // Yellow for WARN
+#define ERROR_COLOR "\033[31m\033[1m" // Red for ERROR
+#define DIMMED_COLOR "\033[2m"        // Dimmed white for keys
 
 // Log levels
 typedef enum { LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } LogLevel;
