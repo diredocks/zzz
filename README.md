@@ -2,6 +2,23 @@
 
 802.1x client with ease. 😎
 
+## Build
+You'll need required tools to build it:
+```shell
+# Ubuntu/Debian
+sudo apt update
+sudo apt install cmake gcc libpcap-dev
+# Fedora/RHEL
+sudo dnf install cmake gcc libpcap-devel
+```
+In project directory:
+```shell
+mkdir build
+cd build
+cmake ..
+make
+```
+
 ## Todo
 - [ ] Integrity Check Algorithm  
 - [ ] Customizability  
