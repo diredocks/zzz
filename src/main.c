@@ -31,7 +31,9 @@ int main(void) {
   toml_table_t *conf = toml_parse_file(conf_file, toml_err, sizeof(toml_err));
   fclose(conf_file);
   if (!conf) {
-    log_error(toml_err, NULL);
+    char err_msg[227];
+    sprintf(err_msg, "Error loading config.toml: %s", toml_err);
+    log_error(err_msg, NULL);
     return EXIT_FAILURE;
   }
 
