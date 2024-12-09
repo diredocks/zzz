@@ -1,12 +1,7 @@
 #include "../crypto/crypto.h"
-#include "bits/types/struct_iovec.h"
 #include "packet.h"
-#include <netinet/in.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 void append_to_buffer(uint8_t *dest, int *offset, const uint8_t *src,
                       size_t len) {

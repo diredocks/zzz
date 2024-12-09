@@ -1,11 +1,7 @@
-#include "bits/types/struct_iovec.h"
 #include "packet.h"
-#include <netinet/in.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 // NOTE: parse_ethernet_packet will parse packet chainly
 void parse_ethernet_packet(const u_char *packet, EthernetHeader *eth) {

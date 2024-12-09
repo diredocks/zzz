@@ -1,6 +1,6 @@
 #ifndef D3XCRYPTO
 #define D3XCRYPTO
-#include <bits/types/struct_iovec.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define VERSION_BUFFER_SIZE 20
