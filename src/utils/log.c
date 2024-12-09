@@ -28,12 +28,12 @@ void log_message(LogLevel level, const char *message, ...) {
     output_stream = stderr; // WARN goes to stderr
     break;
   case LOG_LEVEL_ERROR:
-    level_str = "ERROR";
+    level_str = "ERRO";
     level_color = ERROR_COLOR;
     output_stream = stderr; // ERROR goes to stderr
     break;
   default:
-    level_str = "UNKNOWN";
+    level_str = "UNKW";
     level_color = RESET_COLOR;
     output_stream = stderr; // Default to stderr for unknown levels
     break;
