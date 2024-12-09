@@ -31,5 +31,5 @@ target_link_libraries(d3x pcap)
 
 # Optionally set default build type
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
