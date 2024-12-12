@@ -1,8 +1,10 @@
+#include "../crypto/crypto.h"
 #include "../utils/log.h"
 #include "packet.h"
 #include <pcap/pcap.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 
 void eapol_packet_printer(EAPOLHeader eapol) {
@@ -40,6 +42,16 @@ void eap_request_handler(AuthService auth_service, const EthernetHeader eth) {
   }
 }
 
+void eap_h3c_handler(AuthService auth_service, const EthernetHeader eth) {
+  uint8_t challenge[32] = {0};
+  if (((*(eth.eapol->eap)).data.type_data)[0] == 0x35 &&
+      ((*(eth.eapol->eap)).data.type_data)[1] == 0x2b) {
+    memcpy(challenge, (*(eth.eapol->eap)).data.type_data + 2, 32);
+    challenge_response(challenge);
+    log_info("Responsed Identity", NULL);
+  }
+}
+
 void eap_packet_handler(AuthService auth_service, const EthernetHeader eth) {
   eap_packet_printer(*(eth.eapol->eap));
   switch (eth.eapol->eap->code) {
@@ -58,6 +70,7 @@ void eap_packet_handler(AuthService auth_service, const EthernetHeader eth) {
     log_info("Login Successful", NULL);
     break;
   case EAP_CODE_H3C:
+    eap_h3c_handler(auth_service, eth);
     break;
   default:
     log_warn("Unknow EAP", "Id", eth.eapol->eap->identifier, "Code",

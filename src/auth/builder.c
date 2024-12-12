@@ -1,5 +1,6 @@
 #include "../crypto/crypto.h"
 #include "packet.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -106,9 +107,21 @@ size_t build_first_identity_type_data(uint8_t **buffer,
   return offset;
 }
 
+// TODO: identity
+size_t build_identity_type_data(uint8_t **buffer,
+                                const AuthService auth_service,
+                                const EAPHeader eap_from) {
+  // Identity Packet
+  // Build
+  uint8_t identity_header[] = {0x16, 0x20};
+  uint8_t ip_header[] = {0x15, 0x04};
+  int offset = 0;
+
+  return offset;
+}
+
 size_t build_md5otp_type_data(uint8_t **buffer, const AuthService auth_service,
                               const EthernetHeader eth_from) {
-  // TODO: username, password
   // MD5Otp Packet
   size_t password_buffer_len = strlen((const char *)auth_service.password);
   size_t username_buffer_len = strlen((const char *)auth_service.username);

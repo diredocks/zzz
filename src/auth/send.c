@@ -98,3 +98,6 @@ void send_logoff_packet(const AuthService auth_service) {
   free(packet_to_send);
   log_info("Logoff Has been sent", NULL);
 }
+
+// TODO: identity
+void send_h3c_identity_packet(const AuthService auth_service) {}
