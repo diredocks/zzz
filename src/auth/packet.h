@@ -107,7 +107,7 @@ size_t build_md5otp_type_data(uint8_t **buffer, const AuthService auth_service,
 void send_identity_packet(
     const AuthService auth_service,
     const EthernetHeader eth_from); // TODO: identity -> md5otp
-void send_start_packet(pcap_t *handle, const AuthService auth_service);
+void send_start_packet(const AuthService auth_service);
 void send_first_identity_packet(const AuthService auth_service,
                                 const EthernetHeader eth_from);
 void send_logoff_packet(const AuthService auth_service);

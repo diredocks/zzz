@@ -9,7 +9,7 @@
 const uint8_t BOARDCAST_ADDR[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 const uint8_t MULTICASR_ADDR[] = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x03};
 
-void send_start_packet(pcap_t *handle, const AuthService auth_service) {
+void send_start_packet(const AuthService auth_service) {
   // Start Packet
   // Build
   EAPOLHeader eapol = {.type = EAPOL_TYPE_START};
@@ -19,7 +19,8 @@ void send_start_packet(pcap_t *handle, const AuthService auth_service) {
 
   uint8_t *packet_to_send = build_eapol_packet(eth, 0);
   // Send and Free
-  send_packet(handle, packet_to_send, ETHERNET_HEADER_SIZE + EAPOL_HEADER_SIZE);
+  send_packet(auth_service.handle, packet_to_send,
+              ETHERNET_HEADER_SIZE + EAPOL_HEADER_SIZE);
   free(packet_to_send);
   log_info("Start Packet Has been sent", NULL);
 }

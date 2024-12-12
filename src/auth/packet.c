@@ -94,9 +94,8 @@ void initail_handler(u_char *auth_service, const struct pcap_pkthdr *header,
 
 // Initialize Handle:
 void initialize_handle(AuthService *auth_service) {
-  pcap_t *handle = auth_service->handle;
   // Send Start
-  send_start_packet(handle, *auth_service);
+  send_start_packet(*auth_service);
   // Wait for Request, Set Filter
-  pcap_loop(handle, -1, initail_handler, (u_char *)auth_service);
+  pcap_loop(auth_service->handle, -1, initail_handler, (u_char *)auth_service);
 }
