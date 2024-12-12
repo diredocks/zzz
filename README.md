@@ -36,6 +36,7 @@ Inspired by:
 Third Party Code used in this project:
 - [cktan/tomlc99](https://github.com/cktan/tomlc99)
 - [Zunawe/md5-c](https://github.com/Zunawe/md5-c)
+- [kokke/tiny-AES-c](https://github.com/kokke/tiny-AES-c)
 - [Base64 Encode and Decode in C](https://nachtimwald.com/2017/11/18/base64-encode-and-decode-in-c/)
 
 > Crafted with love and a touch of C wizardry. 🪄❤️
