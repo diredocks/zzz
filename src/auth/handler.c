@@ -50,6 +50,9 @@ void eap_packet_handler(AuthService auth_service, const EthernetHeader eth) {
     break;
   case EAP_CODE_FAILURE:
     log_error("Login Failure", NULL);
+    pcap_breakloop(auth_service.handle);
+    pcap_close(auth_service.handle);
+    exit(EXIT_FAILURE);
     break;
   case EAP_CODE_SUCCESS:
     log_info("Login Successful", NULL);
