@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 void eapol_packet_printer(EAPOLHeader eapol) {
   log_info("EAPOL", "Type", eapol.type, "Version", eapol.version, "Length",

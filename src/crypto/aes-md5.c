@@ -3,7 +3,6 @@
 #include "crypto.h"
 #include "dict.h"
 #include <arpa/inet.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
