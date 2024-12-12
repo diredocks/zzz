@@ -49,8 +49,7 @@ void eap_request_handler(AuthService auth_service, const EthernetHeader eth) {
 
 void eap_h3c_handler(AuthService auth_service, const EthernetHeader eth) {
   uint8_t challenge[32] = {0};
-  if (((*(eth.eapol->eap)).data.type_data)[0] == 0x35 &&
-      ((*(eth.eapol->eap)).data.type_data)[1] == 0x2b) {
+  if (*(uint16_t *)((*(eth.eapol->eap)).data.type_data) == 0x352b) {
     memcpy(challenge, (*(eth.eapol->eap)).data.type_data + 2, 32);
     challenge_response(challenge);
     log_info("Responsed Identity", NULL);
