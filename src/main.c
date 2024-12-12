@@ -20,12 +20,64 @@ void handle_signal(int sig) {
   }
 }
 
-int main(void) {
+void print_help() {
+  printf("d3x: 802.1x client with ease\n");
+  printf("  --help            Display this help message\n");
+  printf("  --config [path]   Specify the configuration file path\n");
+  printf("  --version         Display the version information\n");
+}
+
+void print_version() {
+  const char *colors[] = {"\033[31m", "\033[33m", "\033[32m",
+                          "\033[36m", "\033[34m", "\033[35m"};
+  const char *reset = "\033[0m";
+  const char *version = "     3    \n"
+                        " __|  \\ / \n"
+                        "|<<|   <  "
+                        "  802.1x client with ease\n"
+                        "|__|  / \\ \n"
+                        "\n"
+                        "github.com/diredocks/d3x\n";
+
+  for (int i = 0; version[i] != '\0'; i++) {
+    printf("%s%c%s", colors[i % 6], version[i], reset);
+  }
+}
+
+int main(int argc, char *argv[]) {
+  char *config_path;
+
+  if (argc < 2) {
+    log_error("No arguments provided. Use --help for usage information", NULL);
+    return 1;
+  }
+
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "--help") == 0) {
+      print_help();
+      return 0;
+    } else if (strcmp(argv[i], "--config") == 0) {
+      if (i + 1 < argc) {
+        config_path = argv[i + 1];
+        i++; // Skip the next argument as it's the config path
+      } else {
+        log_error("--config option requires a file path argument", NULL);
+        return 1;
+      }
+    } else if (strcmp(argv[i], "--version") == 0) {
+      print_version();
+      return 0;
+    } else {
+      log_error("Unknown option. Use --help for usage information", NULL);
+      return 1;
+    }
+  }
+
   FILE *conf_file;
   char toml_err[200];
-  conf_file = fopen("./config.toml", "r");
+  conf_file = fopen(config_path, "r");
   if (!conf_file) {
-    log_error("Error loading config.toml", NULL);
+    log_error("Can't load config from give path", NULL);
     return EXIT_FAILURE;
   }
 
