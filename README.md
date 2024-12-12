@@ -2,6 +2,8 @@
 
 802.1x client with ease. 😎
 
+![d3x running on my linux desktop](./Screenshot.png)
+
 ## Build
 You'll need required tools to build it:
 ```shell
