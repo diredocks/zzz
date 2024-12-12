@@ -63,6 +63,8 @@ int main(void) {
     return EXIT_FAILURE;
   }
 
+  int offline_flag = 1;
+  auth_service.offline_flag = &offline_flag;
   auth_service.handle = handle;
   if (get_mac_addr((const char *)device, auth_service.host_addr)) {
     log_error("Error getting MAC address", NULL);
@@ -86,6 +88,18 @@ int main(void) {
           sizeof(auth_service.password) - 1);
   auth_service.username[sizeof(auth_service.username) - 1] = '\0';
   auth_service.password[sizeof(auth_service.password) - 1] = '\0';
+
+  toml_datum_t toml_retry = toml_int_in(toml_auth, "retry");
+  if (!toml_retry.ok) {
+    log_error("Missing 'retry' in 'auth' table", NULL);
+    pcap_close(handle);
+    free(toml_username.u.s);
+    free(toml_password.u.s);
+    free(toml_device.u.s);
+    toml_free(conf);
+    return EXIT_FAILURE;
+  }
+  auth_service.retry = &toml_retry.u.i;
 
   free(toml_username.u.s);
   free(toml_password.u.s);

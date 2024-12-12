@@ -22,7 +22,7 @@ make
 ## Todo
 - [ ] Integrity Check Algorithm  
 - [ ] Customizability  
-- [ ] Kickoff Recovery  
+- [x] Kickoff Recovery  
 - [ ] Support for Windows  
 - [ ] Better Documentation  
 

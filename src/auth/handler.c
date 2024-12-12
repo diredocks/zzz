@@ -36,6 +36,11 @@ void eap_request_handler(AuthService auth_service, const EthernetHeader eth) {
   case EAP_TYPE_MD5OTP:
     send_identity_packet(auth_service, eth);
     break;
+  case EAP_TYPE_IDENTITY:
+    if (*auth_service.offline_flag)
+      send_first_identity_packet(auth_service, eth);
+    // else...
+    break;
   default:
     log_warn("Unknow EAP", "Id", eth.eapol->eap->identifier, "Type",
              eth.eapol->eap->data.type, NULL);
@@ -52,6 +57,36 @@ void eap_h3c_handler(AuthService auth_service, const EthernetHeader eth) {
   }
 }
 
+void cleanup_and_exit(AuthService auth_service) {
+  pcap_breakloop(auth_service.handle);
+  pcap_close(auth_service.handle);
+  exit(EXIT_FAILURE);
+}
+
+void eap_failure_handler(AuthService auth_service, const EthernetHeader eth) {
+  switch (eth.eapol->eap->data.type) {
+  case EAP_TYPE_KICKOFF:
+    log_error("You've been kicked by server", NULL);
+    log_warn("Restarting...", NULL);
+    send_start_packet(auth_service);
+    break;
+  case EAP_TYPE_MD5_FAILURE:
+    log_error("Login Failure", NULL);
+    cleanup_and_exit(auth_service);
+    break;
+  default:
+    log_warn("Unknow EAP", "Type", eth.eapol->eap->data.type, NULL);
+    if (*auth_service.retry > 0) {
+      *(auth_service.retry) = *(auth_service.retry) - 1;
+      send_start_packet(auth_service);
+    } else {
+      log_error("Retry ran out", NULL);
+      cleanup_and_exit(auth_service);
+    }
+    break;
+  }
+}
+
 void eap_packet_handler(AuthService auth_service, const EthernetHeader eth) {
   eap_packet_printer(*(eth.eapol->eap));
   switch (eth.eapol->eap->code) {
@@ -61,12 +96,11 @@ void eap_packet_handler(AuthService auth_service, const EthernetHeader eth) {
   case EAP_CODE_RESPONSE:
     break;
   case EAP_CODE_FAILURE:
-    log_error("Login Failure", NULL);
-    pcap_breakloop(auth_service.handle);
-    pcap_close(auth_service.handle);
-    exit(EXIT_FAILURE);
+    *auth_service.offline_flag = 1;
+    eap_failure_handler(auth_service, eth);
     break;
   case EAP_CODE_SUCCESS:
+    *auth_service.offline_flag = 0;
     log_info("Login Successful", NULL);
     break;
   case EAP_CODE_H3C:

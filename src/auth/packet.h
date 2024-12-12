@@ -29,6 +29,8 @@
 #define EAP_CODE_H3C 0x0a
 #define EAP_TYPE_IDENTITY 0x01
 #define EAP_TYPE_MD5OTP 0x04
+#define EAP_TYPE_KICKOFF 0x08
+#define EAP_TYPE_MD5_FAILURE 0x09
 
 #define MD5_LENGTH 16
 
@@ -39,6 +41,8 @@ extern const uint8_t BOARDCAST_ADDR[];
 extern const uint8_t MULTICASR_ADDR[];
 
 typedef struct {
+  int64_t *retry;
+  int *offline_flag;
   uint8_t username[MAX_USERNAME_LEN];
   uint8_t password[MAX_PASSWORD_LEN];
   uint8_t server_addr[HARDWARE_ADDR_SIZE];
