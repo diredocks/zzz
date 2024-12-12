@@ -9,12 +9,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-pcap_t *handle = NULL;
+AuthService auth_service;
 
 void handle_signal(int sig) {
-  if (handle) {
-    pcap_breakloop(handle);
+  if (auth_service.handle) {
+    pcap_breakloop(auth_service.handle);
     printf("\r");
+    send_logoff_packet(auth_service);
     log_info("Exiting d3x...", NULL);
   }
 }
@@ -54,7 +55,7 @@ int main(void) {
   strncpy((char *)device, toml_device.u.s, sizeof(device) - 1);
 
   char err[PCAP_ERRBUF_SIZE];
-  handle = pcap_open_live((const char *)device, BUFSIZ, 0, 250, err);
+  pcap_t *handle = pcap_open_live((const char *)device, BUFSIZ, 0, 250, err);
   if (!handle) {
     log_error(err, NULL);
     free(toml_device.u.s);
@@ -62,7 +63,7 @@ int main(void) {
     return EXIT_FAILURE;
   }
 
-  AuthService auth_service = {.handle = handle};
+  auth_service.handle = handle;
   if (get_mac_addr((const char *)device, auth_service.host_addr)) {
     log_error("Error getting MAC address", NULL);
     return EXIT_FAILURE;

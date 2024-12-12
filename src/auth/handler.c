@@ -8,23 +8,12 @@
 void eapol_packet_printer(EAPOLHeader eapol) {
   log_info("EAPOL", "Type", eapol.type, "Version", eapol.version, "Length",
            eapol.length, NULL);
-  /*printf("[???] EAPOL Type=%d Version=%d Length=%d\n", eapol.type,
-         eapol.version, eapol.length);*/
 }
 
 void eapol_packet_handler(EAPOLHeader eapol) { eapol_packet_printer(eapol); }
 
 void eap_packet_printer(const EAPHeader eap) {
-  /*
-  printf("[%03d] EAP Code=%d Length=%d ", eap.identifier, eap.code, eap.length);
   if (eap.data.type != 255) { // TODO: Make eap.data.type 255 a marco or enum
-    printf("Type=%d ", eap.data.type);
-  }
-  if (eap.data.type_data != NULL) {
-    printf("TypeData[0]=%02X", eap.data.type_data[0]);
-  }
-  printf("\n");*/
-  if (eap.data.type != 255) {
     if (eap.data.type_data != NULL) {
       log_info("EAP", "Id", eap.identifier, "Code", eap.code, "Length",
                eap.length, "Type", eap.data.type, "TypeData[0]",
@@ -60,7 +49,6 @@ void eap_packet_handler(AuthService auth_service, const EthernetHeader eth) {
   case EAP_CODE_RESPONSE:
     break;
   case EAP_CODE_FAILURE:
-    // fprintf(stderr, "[ERR] Login Failure\n");
     log_error("Login Failure", NULL);
     break;
   case EAP_CODE_SUCCESS:

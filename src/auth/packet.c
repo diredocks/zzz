@@ -40,9 +40,11 @@ void initail_handler(u_char *auth_service, const struct pcap_pkthdr *header,
 
   if (eth.eapol != NULL && eapol.eap != NULL && eap.code == EAP_CODE_REQUESTS &&
       eap.data.type == EAP_TYPE_IDENTITY) { // eap packet
+    eap_packet_printer(eap);
+    memcpy(((AuthService *)auth_service)->server_addr, eth.src_mac,
+           HARDWARE_ADDR_SIZE);
     // set handle filter to make client
     // proceed packets to device only
-    eap_packet_printer(eap);
     struct bpf_program filter;
     char filter_str[128];
     sprintf(filter_str,
@@ -53,6 +55,7 @@ void initail_handler(u_char *auth_service, const struct pcap_pkthdr *header,
     pcap_compile((pcap_t *)handle, &filter, filter_str, 1, 0);
     pcap_setfilter((pcap_t *)handle, &filter);
     pcap_freecode(&filter);
+
     log_info("BPF Filter has been set", NULL);
     // Send FirstIdentity
     send_first_identity_packet(*(AuthService *)auth_service, eth);
@@ -61,7 +64,6 @@ void initail_handler(u_char *auth_service, const struct pcap_pkthdr *header,
 }
 
 // Initialize Handle:
-// void initialize_handle(pcap_t *handle) {
 void initialize_handle(AuthService *auth_service) {
   pcap_t *handle = auth_service->handle;
   // Send Start

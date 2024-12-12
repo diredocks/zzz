@@ -1,6 +1,7 @@
 #include "../utils/log.h"
 #include "packet.h"
 #include <pcap/pcap.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +14,7 @@ void send_start_packet(pcap_t *handle, const AuthService auth_service) {
   // Build
   EAPOLHeader eapol = {.type = EAPOL_TYPE_START};
   EthernetHeader eth = {.eapol = &eapol};
-  memcpy(eth.dst_mac, BOARDCAST_ADDR, HARDWARE_ADDR_SIZE);
+  memcpy(eth.dst_mac, auth_service.server_addr, HARDWARE_ADDR_SIZE);
   memcpy(eth.src_mac, auth_service.host_addr, HARDWARE_ADDR_SIZE);
 
   uint8_t *packet_to_send = build_eapol_packet(eth, 0);
@@ -21,7 +22,6 @@ void send_start_packet(pcap_t *handle, const AuthService auth_service) {
   pcap_sendpacket(handle, packet_to_send,
                   ETHERNET_HEADER_SIZE + EAPOL_HEADER_SIZE);
   free(packet_to_send);
-  // printf("[SNT] StartPacket has been sent\n");
   log_info("Start Packet Has been sent", NULL);
 }
 
@@ -42,7 +42,7 @@ void send_first_identity_packet(const AuthService auth_service,
       .eap = &eap_to,
   };
   EthernetHeader eth = {.eapol = &eapol};
-  memcpy(eth.dst_mac, eth_from.src_mac, HARDWARE_ADDR_SIZE);
+  memcpy(eth.dst_mac, auth_service.server_addr, HARDWARE_ADDR_SIZE);
   memcpy(eth.src_mac, auth_service.host_addr, HARDWARE_ADDR_SIZE);
 
   uint8_t *packet_to_send = build_eap_packet(eth);
@@ -52,7 +52,6 @@ void send_first_identity_packet(const AuthService auth_service,
                       offset + sizeof(eap_to.data.type));
   free(packet_to_send);
   free(type_data_buffer);
-  // printf("[SNT] FirstIdentity has been sent\n");
   log_info("FirstIdentity Has been sent", NULL);
 }
 
@@ -73,7 +72,7 @@ void send_identity_packet(AuthService auth_service,
       .eap = &eap_to,
   };
   EthernetHeader eth = {.eapol = &eapol};
-  memcpy(eth.dst_mac, eth_from.src_mac, HARDWARE_ADDR_SIZE);
+  memcpy(eth.dst_mac, auth_service.server_addr, HARDWARE_ADDR_SIZE);
   memcpy(eth.src_mac, auth_service.host_addr, HARDWARE_ADDR_SIZE);
 
   uint8_t *packet_to_send = build_eap_packet(eth);
@@ -83,16 +82,19 @@ void send_identity_packet(AuthService auth_service,
                       offset + sizeof(eap_to.data.type));
   free(packet_to_send);
   free(type_data_buffer);
-  // printf("[SNT] Identity(MD5OTP) has been sent\n");
   log_info("Identity Has been sent", NULL);
 }
 
-void send_logoff_packet(pcap_t *handle, const AuthService auth_service) {
-  EAPOLHeader eap = {
+void send_logoff_packet(const AuthService auth_service) {
+  EAPOLHeader eapol = {
       .type = EAPOL_TYPE_LOGOFF,
   };
-  EthernetHeader eth = {.eapol = &eap};
-  // memcpy(eth.dst_mac, eth_from.src_mac, HARDWARE_ADDR_SIZE);
-  // TODO: Get server hardware address
+  EthernetHeader eth = {.eapol = &eapol};
+  memcpy(eth.dst_mac, auth_service.server_addr, HARDWARE_ADDR_SIZE);
   memcpy(eth.src_mac, auth_service.host_addr, HARDWARE_ADDR_SIZE);
+  uint8_t *packet_to_send = build_eapol_packet(eth, 0);
+  pcap_sendpacket(auth_service.handle, packet_to_send,
+                  ETHERNET_HEADER_SIZE + EAPOL_HEADER_SIZE);
+  free(packet_to_send);
+  log_info("Logoff Has been sent", NULL);
 }

@@ -75,7 +75,6 @@ typedef struct {
 
 int get_mac_addr(const char *interface, uint8_t *mac_addr);
 
-// void initialize_handle(pcap_t *handle);
 void initialize_handle(AuthService *auth_service); // NOTE: For consistency with
                                                    // pcap_loop callback binding
 
@@ -108,4 +107,5 @@ void send_identity_packet(
 void send_start_packet(pcap_t *handle, const AuthService auth_service);
 void send_first_identity_packet(const AuthService auth_service,
                                 const EthernetHeader eth_from);
+void send_logoff_packet(const AuthService auth_service);
 #endif
