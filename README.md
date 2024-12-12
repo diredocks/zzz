@@ -22,7 +22,6 @@ make
 ## Todo
 - [ ] Integrity Check Algorithm  
 - [ ] Customizability  
-- [ ] Login/Logoff Hook  
 - [ ] Kickoff Recovery  
 - [ ] Support for Windows  
 - [ ] Better Documentation  
