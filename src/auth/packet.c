@@ -9,6 +9,35 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+int send_packet(pcap_t *handle, uint8_t *packet, size_t length) {
+  size_t padded_length = length;
+
+  if (length < ETHERNET_FRAME_MIN_SIZE - CRC_SIZE) {
+    padded_length = ETHERNET_FRAME_MIN_SIZE - CRC_SIZE;
+  }
+
+  uint8_t *padded_packet = malloc(padded_length);
+  if (!padded_packet) {
+    log_error("Memory allocation failed for padding", NULL);
+    return -1;
+  }
+
+  memcpy(padded_packet, packet, length);
+  if (padded_length > length) {
+    memset(padded_packet + length, 0, padded_length - length);
+  }
+
+  int result = pcap_sendpacket(handle, padded_packet, padded_length);
+
+  free(padded_packet);
+  if (result != 0) {
+    log_error(pcap_geterr(handle), NULL);
+    return -1;
+  }
+
+  return 0;
+}
+
 int get_mac_addr(const char *interface, uint8_t *mac_addr) {
   int sockfd;
   struct ifreq ifr;
