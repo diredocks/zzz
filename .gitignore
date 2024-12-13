@@ -2,3 +2,5 @@ src/d3x
 src/crypto/a.out
 src/config.toml
 build
+.vscode
+npcap-sdk
