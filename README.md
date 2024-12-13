@@ -22,10 +22,10 @@ make
 ```
 
 ## Todo
+- [x] Kickoff Recovery  
+- [x] Support for Windows  
 - [ ] Integrity Check Algorithm  
 - [ ] Customizability  
-- [x] Kickoff Recovery  
-- [ ] Support for Windows  
 - [ ] Better Documentation  
 
 ## Credit

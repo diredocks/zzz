@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  uint8_t device[30];
+  uint8_t device[64]; // For Windows Device Name
   toml_datum_t toml_device = toml_string_in(toml_auth, "device");
   if (!toml_device.ok) {
     log_error("Missing 'device' field in 'auth' table", NULL);

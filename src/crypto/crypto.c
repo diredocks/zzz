@@ -1,6 +1,10 @@
 #include "crypto.h"
 #include "md5.h"
-#include <arpa/inet.h> // For ntohs and htons
+#ifdef _WIN32
+#include <winsock2.h> // For ntohs and htons on Windows
+#else
+#include <arpa/inet.h> // For ntohs and htons on Linux
+#endif
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

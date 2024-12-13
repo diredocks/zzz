@@ -2,7 +2,12 @@
 #include "aes.h"
 #include "crypto.h"
 #include "dict.h"
-#include <arpa/inet.h>
+#ifdef _WIN32
+#include <winsock2.h> // For ntohs and htons on Windows
+#define htobe32(x) htonl(x)
+#else
+#include <arpa/inet.h> // For ntohs and htons on Linux
+#endif
 #include <stdio.h>
 #include <string.h>
 

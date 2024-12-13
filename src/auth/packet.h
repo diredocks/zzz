@@ -1,4 +1,8 @@
-#include <arpa/inet.h> // For ntohs and htons
+#ifdef _WIN32
+#include <winsock2.h> // For ntohs and htons on Windows
+#else
+#include <arpa/inet.h> // For ntohs and htons on Linux
+#endif
 #include <pcap/pcap.h>
 #include <sys/types.h>
 #ifndef D3XPACKET
@@ -80,7 +84,7 @@ typedef struct {
 } EthernetHeader;
 
 // Functions implemented in packet.c
-int get_mac_addr(const char *interface, uint8_t *mac_addr);
+int get_mac_addr(const char *interface_name, uint8_t *mac_addr);
 int send_packet(pcap_t *handle, uint8_t *packet, size_t length);
 void initialize_handle(AuthService *auth_service); // NOTE: For consistency with
                                                    // pcap_loop callback binding
