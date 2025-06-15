@@ -66,11 +66,15 @@ int auth_loop(void) {
     break;
   }
 
+  // in case if there's an error
+  uint8_t err_msg_size = g_pkt->eap_type_data[0];
+  char err_msg[err_msg_size + 1];
+
   switch (g_pkt->eap_type) {
 
   case EAP_TYPE_IDENTITY:
-    // TODO: handle identity
     send_identity_packet(g_pkt);
+    log_info("answered identity", NULL);
     break;
 
   case EAP_TYPE_MD5OTP:
@@ -79,10 +83,11 @@ int auth_loop(void) {
     break;
 
   case EAP_TYPE_MD5_FAILURE:
-    log_error("md5 failure", NULL);
-    uint8_t err_msg_size = g_pkt->eap_type_data[0];
-    if (err_msg_size > 0)
-      log_error((const char *)(g_pkt->eap_type_data + 1), NULL);
+    if (err_msg_size > 0) {
+      memcpy(err_msg, (const char *)(g_pkt->eap_type_data + 1), err_msg_size);
+      err_msg[err_msg_size] = '\0';
+      log_error(err_msg, NULL);
+    }
     return 2;
     break;
 
