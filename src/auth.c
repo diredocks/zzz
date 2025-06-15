@@ -70,6 +70,7 @@ int auth_loop(void) {
 
   case EAP_TYPE_IDENTITY:
     // TODO: handle identity
+    send_identity_packet(g_pkt);
     break;
 
   case EAP_TYPE_MD5OTP:

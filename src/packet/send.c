@@ -1,3 +1,4 @@
+#include "crypto/aes-md5.h"
 #include "crypto/crypto.h"
 #include "crypto/md5.h"
 #include "packet/packet.h"
@@ -67,6 +68,40 @@ void send_first_identity_packet(const struct Packet *pkt) {
   device_send_packet(g_device.handle, (uint8_t *)packet,
                      sizeof(struct Packet) + payload_len);
   log_info("sent first identity packet", NULL);
+  free(packet);
+}
+
+void send_identity_packet(const struct Packet *pkt) {
+  size_t offset = 0;
+  size_t payload_len =
+      sizeof(PAYLOAD_IDENTITY_HEADER) + 32 /* length of g_aes_md5_response */ +
+      sizeof(PAYLOAD_IP_HEADER) + 4 /* ip */ + sizeof(PAYLOAD_VERSION_HEADER) +
+      BASE64_LENGTH(BUFFER_SIZE) + sizeof(PAYLOAD_PADDING_HEADER) +
+      strlen(g_config.username);
+
+  struct Packet *packet = make_base_packet(
+      pkt, EAPOL_TYPE_EAP, EAP_CODE_RESPONSE, EAP_TYPE_IDENTITY, payload_len);
+  if (!packet)
+    return;
+
+  uint8_t *buf = packet->eap_type_data;
+  uint8_t *ip_buf = {0}; /* FIXME: ip */
+  APPEND_TO_BUFFER(buf, &offset, PAYLOAD_IDENTITY_HEADER,
+                   sizeof(PAYLOAD_IDENTITY_HEADER));
+  APPEND_TO_BUFFER(buf, &offset, g_aes_md5_response, 32);
+  APPEND_TO_BUFFER(buf, &offset, PAYLOAD_IP_HEADER, sizeof(PAYLOAD_IP_HEADER));
+  APPEND_TO_BUFFER(buf, &offset, ip_buf, 4);
+  APPEND_TO_BUFFER(buf, &offset, PAYLOAD_VERSION_HEADER,
+                   sizeof(PAYLOAD_VERSION_HEADER));
+  APPEND_TO_BUFFER(buf, &offset, g_based_client_version,
+                   BASE64_LENGTH(BUFFER_SIZE));
+  APPEND_TO_BUFFER(buf, &offset, PAYLOAD_PADDING_HEADER,
+                   sizeof(PAYLOAD_PADDING_HEADER));
+  APPEND_TO_BUFFER(buf, &offset, g_config.username, strlen(g_config.username));
+
+  device_send_packet(g_device.handle, (uint8_t *)packet,
+                     sizeof(struct Packet) + payload_len);
+  log_info("sent identity packet", NULL);
   free(packet);
 }
 

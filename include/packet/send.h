@@ -5,6 +5,7 @@
 
 void send_start_packet();
 void send_first_identity_packet(const struct Packet *pkt);
+void send_identity_packet(const struct Packet *pkt);
 void send_md5otp_packet(const struct Packet *pkt);
 
 #endif // PACKET_SEND_H
