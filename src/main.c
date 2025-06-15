@@ -15,7 +15,7 @@ void sig_exit() {
   if (g_device.handle) {
     pcap_close(g_device.handle);
   }
-  log_info("zzz... bye", NULL);
+  log_info("bye!", NULL);
   exit(EXIT_SUCCESS);
 }
 
@@ -24,8 +24,6 @@ int main(int argc, char *argv[]) {
     log_error("Usage: zzz [path_to_config]", NULL);
     exit(EXIT_FAILURE);
   }
-
-  log_info("zzz - i'm sleepy", NULL);
 
   signal(SIGINT, sig_exit);
   config_init(argv[1]);
