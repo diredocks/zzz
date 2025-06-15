@@ -19,7 +19,7 @@ target_include_directories(${PROJECT_NAME}
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   set(
     CMAKE_C_FLAGS
-    "${CMAKE_C_FLAGS} -Werror -fsanitize=address"
+    "${CMAKE_C_FLAGS} -Werror -fsanitize=address -g"
   )
   target_link_options(zzz
     BEFORE PUBLIC -fsanitize=address
