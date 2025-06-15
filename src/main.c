@@ -21,7 +21,7 @@ void sig_exit() {
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
-    log_error("Usage: zzz [path_to_config]", NULL);
+    log_info("Usage: zzz [path_to_config]", NULL);
     exit(EXIT_FAILURE);
   }
 

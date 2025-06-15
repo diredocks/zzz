@@ -14,10 +14,9 @@ struct pcap_pkthdr *g_hdr;
 void auth_handshake(void) {
   send_start_packet();
 
-  int ret = pcap_next_ex(g_device.handle, &g_hdr, (const u_char **)&g_pkt);
-  if (ret != 1) {
+  if (pcap_next_ex(g_device.handle, &g_hdr, (const u_char **)&g_pkt) != 1) {
     log_error("failed to handshake with server", NULL);
-    return;
+    exit(EXIT_FAILURE);
   }
 
   memcpy(g_default_packet.dst_mac, g_pkt->src_mac, HARDWARE_ADDR_SIZE);
@@ -35,8 +34,7 @@ void auth_handshake(void) {
 }
 
 int auth_loop(void) {
-  int ret = pcap_next_ex(g_device.handle, &g_hdr, (const u_char **)&g_pkt);
-  if (ret != 1) {
+  if (pcap_next_ex(g_device.handle, &g_hdr, (const u_char **)&g_pkt) != 1) {
     log_error("failed to get packet from server", NULL);
     return 1;
   }
