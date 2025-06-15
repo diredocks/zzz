@@ -5,6 +5,7 @@
 #include "utils/device.h"
 #include "utils/log.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 const struct Packet *g_pkt;
@@ -40,6 +41,10 @@ int auth_loop(void) {
     return 1;
   }
 
+  // in case if there's an error
+  uint8_t err_msg_size = g_pkt->eap_type_data[0];
+  char err_msg[err_msg_size + 1];
+
   switch (g_pkt->eap_code) {
 
   case EAP_CODE_SUCCESS:
@@ -48,6 +53,28 @@ int auth_loop(void) {
 
   case EAP_CODE_FAILURE:
     log_error("auth failed (T_T)", NULL);
+
+    switch (g_pkt->eap_type) {
+
+    case EAP_TYPE_MD5_FAILURE:
+      if (err_msg_size > 0) {
+        memcpy(err_msg, (const char *)(g_pkt->eap_type_data + 1), err_msg_size);
+        err_msg[err_msg_size] = '\0';
+        log_error(err_msg, NULL);
+      }
+      return 2;
+      break;
+
+    case EAP_TYPE_KICKOFF:
+      log_error("server kickoff", NULL);
+      // TODO: restart auth
+      break;
+
+    default:
+      log_error("unsupported eap error ", "type", g_pkt->eap_type);
+      exit(EXIT_FAILURE);
+    }
+
     break;
 
   case EAP_CODE_REQUESTS:
@@ -66,10 +93,6 @@ int auth_loop(void) {
     break;
   }
 
-  // in case if there's an error
-  uint8_t err_msg_size = g_pkt->eap_type_data[0];
-  char err_msg[err_msg_size + 1];
-
   switch (g_pkt->eap_type) {
 
   case EAP_TYPE_IDENTITY:
@@ -80,20 +103,6 @@ int auth_loop(void) {
   case EAP_TYPE_MD5OTP:
     send_md5otp_packet(g_pkt);
     log_info("answered md5otp", NULL);
-    break;
-
-  case EAP_TYPE_MD5_FAILURE:
-    if (err_msg_size > 0) {
-      memcpy(err_msg, (const char *)(g_pkt->eap_type_data + 1), err_msg_size);
-      err_msg[err_msg_size] = '\0';
-      log_error(err_msg, NULL);
-    }
-    return 2;
-    break;
-
-  case EAP_TYPE_KICKOFF:
-    log_error("server kickoff", NULL);
-    // TODO: restart auth
     break;
 
   default:
