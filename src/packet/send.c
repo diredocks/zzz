@@ -85,7 +85,7 @@ void send_identity_packet(const struct Packet *pkt) {
     return;
 
   uint8_t *buf = packet->eap_type_data;
-  uint8_t *ip_buf = {0}; /* FIXME: ip */
+  uint8_t *ip_buf[4] = {0}; /* FIXME: ip */
   APPEND_TO_BUFFER(buf, &offset, PAYLOAD_IDENTITY_HEADER,
                    sizeof(PAYLOAD_IDENTITY_HEADER));
   APPEND_TO_BUFFER(buf, &offset, g_aes_md5_response, 32);
