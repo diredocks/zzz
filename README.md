@@ -2,6 +2,8 @@
 
 sleepy 802.1x client. 😴
 
+![zzz running in my laptop](Screenshot.png)
+
 ## Build
 You'll need required tools to build it:
 ```shell
