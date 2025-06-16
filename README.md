@@ -1,6 +1,6 @@
 # zzz
 
-802.1x client with ease. 😎
+sleepy 802.1x client. 😴
 
 ## Build
 You'll need required tools to build it:
