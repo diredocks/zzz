@@ -8,6 +8,9 @@
 #define HARDWARE_ADDR_FMT(mac)                                                 \
   (mac)[0], (mac)[1], (mac)[2], (mac)[3], (mac)[4], (mac)[5]
 
+#define IP_ADDR_SIZE 15
+#define IP_DEFAULT "127.0.0.1"
+
 #define ETHERNET_HEADER_SIZE 14
 #define ETHERNET_TYPE_EAPOL 0x888E
 #define ETHERNET_FRAME_MIN_SIZE 64

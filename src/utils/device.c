@@ -1,4 +1,5 @@
 #include "utils/device.h"
+#include "packet/packet.h"
 #include "utils/log.h"
 
 #include <net/if.h>
@@ -33,8 +34,7 @@ void device_send_packet(pcap_t *handle, uint8_t *packet, size_t length) {
   free(padded_packet);
 }
 
-void device_set_hardware_addr(uint8_t *target_addr,
-                              const char *interface_name) {
+void device_set_addr(const char *interface_name) {
   int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
   if (sockfd < 0) {
     log_error("failed to create socket", NULL);
@@ -52,7 +52,17 @@ void device_set_hardware_addr(uint8_t *target_addr,
   }
 
   unsigned char *mac = (unsigned char *)ifr.ifr_hwaddr.sa_data;
-  memcpy(target_addr, mac, HARDWARE_ADDR_SIZE);
+  memcpy(g_device.src_mac, mac, HARDWARE_ADDR_SIZE);
+
+  if (ioctl(sockfd, SIOCGIFADDR, &ifr) != 0) {
+    log_warn("failed to get ip address", NULL);
+    strncpy(g_device.ip_addr, IP_DEFAULT, IP_ADDR_SIZE);
+    close(sockfd);
+    return;
+  }
+
+  char *ip = inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
+  strncpy(g_device.ip_addr, ip, IP_ADDR_SIZE);
 
   close(sockfd);
 }
@@ -73,5 +83,5 @@ void device_init(const char *interface_name) {
   }
 
   device_set_filter("ether proto 0x888E");
-  device_set_hardware_addr(g_device.src_mac, interface_name);
+  device_set_addr(interface_name);
 }

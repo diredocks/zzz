@@ -75,9 +75,9 @@ void send_identity_packet(const struct Packet *pkt) {
   size_t offset = 0;
   size_t payload_len =
       sizeof(PAYLOAD_IDENTITY_HEADER) + 32 /* length of g_aes_md5_response */ +
-      sizeof(PAYLOAD_IP_HEADER) + 4 /* ip */ + sizeof(PAYLOAD_VERSION_HEADER) +
-      BASE64_LENGTH(BUFFER_SIZE) + sizeof(PAYLOAD_PADDING_HEADER) +
-      strlen(g_config.username);
+      sizeof(PAYLOAD_IP_HEADER) + sizeof(g_device.ip_addr) +
+      sizeof(PAYLOAD_VERSION_HEADER) + BASE64_LENGTH(BUFFER_SIZE) +
+      sizeof(PAYLOAD_PADDING_HEADER) + strlen(g_config.username);
 
   struct Packet *packet = make_base_packet(
       pkt, EAPOL_TYPE_EAP, EAP_CODE_RESPONSE, EAP_TYPE_IDENTITY, payload_len);
@@ -85,12 +85,11 @@ void send_identity_packet(const struct Packet *pkt) {
     return;
 
   uint8_t *buf = packet->eap_type_data;
-  uint8_t *ip_buf[4] = {0}; /* FIXME: ip */
   APPEND_TO_BUFFER(buf, &offset, PAYLOAD_IDENTITY_HEADER,
                    sizeof(PAYLOAD_IDENTITY_HEADER));
   APPEND_TO_BUFFER(buf, &offset, g_aes_md5_response, 32);
   APPEND_TO_BUFFER(buf, &offset, PAYLOAD_IP_HEADER, sizeof(PAYLOAD_IP_HEADER));
-  APPEND_TO_BUFFER(buf, &offset, ip_buf, 4);
+  APPEND_TO_BUFFER(buf, &offset, g_device.ip_addr, sizeof(g_device.ip_addr));
   APPEND_TO_BUFFER(buf, &offset, PAYLOAD_VERSION_HEADER,
                    sizeof(PAYLOAD_VERSION_HEADER));
   APPEND_TO_BUFFER(buf, &offset, g_based_client_version,
