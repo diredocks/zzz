@@ -104,7 +104,7 @@ int auth_loop(void) {
     break;
 
   default:
-    log_warn("unsupported eap", "type", g_pkt->eap_type);
+    log_warn("unknown eap", "type", g_pkt->eap_type);
     break;
   }
 

@@ -45,6 +45,15 @@ void send_start_packet() {
   log_info("sent start packet", NULL);
 }
 
+void send_signoff_packet() {
+  struct Packet packet = g_default_packet;
+  packet.eapol_type = EAPOL_TYPE_LOGOFF;
+
+  device_send_packet(g_device.handle, (uint8_t *)&packet,
+                     ETHERNET_HEADER_SIZE + EAPOL_HEADER_SIZE);
+  log_info("sent signoff packet", NULL);
+}
+
 void send_first_identity_packet(const struct Packet *pkt) {
   size_t offset = 0;
   size_t payload_len =

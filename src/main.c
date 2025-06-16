@@ -3,6 +3,7 @@
 #include "auth.h"
 #include "crypto/crypto.h"
 #include "packet/packet.h"
+#include "packet/send.h"
 #include "utils/config.h"
 #include "utils/device.h"
 #include "utils/log.h"
@@ -13,6 +14,7 @@
 void sig_exit() {
   printf("\r");
   if (g_device.handle) {
+    send_signoff_packet();
     pcap_close(g_device.handle);
   }
   log_info("bye!", NULL);
