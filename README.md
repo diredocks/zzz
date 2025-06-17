@@ -15,9 +15,8 @@ sudo dnf install cmake gcc libpcap-devel
 ```
 In project directory:
 ```shell
-mkdir build
+cmake -B build .
 cd build
-cmake ..
 make
 ```
 
