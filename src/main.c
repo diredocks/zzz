@@ -11,7 +11,7 @@
 #include <pcap/pcap.h>
 #include <signal.h>
 
-void sig_exit() {
+void sig_exit(int sig) {
   printf("\r");
   if (g_device.handle) {
     send_signoff_packet();
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   auth_handshake();
   while (auth_loop() == 0) {
   }
-  sig_exit();
+  sig_exit(0);
 
   return 0;
 }
