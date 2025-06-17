@@ -5,7 +5,6 @@
 #include <time.h>
 
 void log_message(LogLevel level, const char *message, ...) {
-  char log_buffer[MAX_LOG_MESSAGE];
   char time_buffer[20];
   time_t now = time(NULL);
   struct tm *tm_info = localtime(&now);

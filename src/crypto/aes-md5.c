@@ -5,7 +5,6 @@
 #include "crypto/md5.h"
 #include "utils/log.h"
 
-#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
 
