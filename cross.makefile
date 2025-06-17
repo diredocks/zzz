@@ -1,4 +1,4 @@
-.PHONY: all toolchain libpcap setup-env zzz clean
+.PHONY: all toolchain libpcap zzz clean
 
 ifndef ARCH
 $(error ARCH is not set. Usage: make ARCH=<arch> [all])
@@ -35,7 +35,7 @@ LIBPCAP_XZ    := $(notdir $(LIBPCAP_URL))
 LIBPCAP_DIR   := $(CURDIR)/$(LIBPCAP_BASE)
 INSTALL_DIR   := $(LIBPCAP_DIR)/install
 
-all: toolchain libpcap setup-env zzz
+all: toolchain libpcap zzz
 
 toolchain: $(CROSS_TGZ) $(CROSS_DIR)
 $(CROSS_TGZ):
