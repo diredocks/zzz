@@ -29,6 +29,7 @@
             [
               libpcap
               # ^ of couse we need it
+              pkg-config
               clang-tools
               cmake
               codespell

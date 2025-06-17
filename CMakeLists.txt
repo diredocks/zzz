@@ -8,6 +8,9 @@ file(GLOB_RECURSE SRC_FILES
     src/*.c
 )
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(PCAP REQUIRED libpcap)
+
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_include_directories(${PROJECT_NAME} 
     PRIVATE 
@@ -26,6 +29,6 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   )
 endif()
 
-target_link_libraries(${PROJECT_NAME}
-  pcap
-)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PCAP_INCLUDE_DIRS})
+target_link_directories(${PROJECT_NAME} PRIVATE ${PCAP_LIBRARY_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PCAP_LIBRARIES})

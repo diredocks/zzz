@@ -6,6 +6,7 @@
 #include "utils/log.h"
 
 #include <stdio.h>
+#include <endian.h>
 #include <string.h>
 
 uint8_t g_aes_md5_response[32] = {0};
