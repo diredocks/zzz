@@ -19,41 +19,45 @@ TOOLCHAIN_NAME := mips64-linux-musl-cross
 else ifeq ($(ARCH),riscv64)
 TOOLCHAIN_NAME := riscv64-linux-musl-cross
 else
-$(error Unsupported ARCH '$(ARCH)'. Supported: armv7 aarch64 x86_64 i686 mips64 mispel riscv64)
+$(error Unsupported ARCH '$(ARCH)'. Supported: armv7 aarch64 x86_64 i686 mips64 mipsel riscv64)
 endif
 
-TRIPLET       := $(patsubst %-cross,%,$(TOOLCHAIN_NAME))
-CROSS_URL     := https://musl.cc/$(TOOLCHAIN_NAME).tgz
-CROSS_TGZ     := $(notdir $(CROSS_URL))
-CROSS_DIR     := $(CURDIR)/$(TOOLCHAIN_NAME)
-TOOLCHAIN_GCC := $(CROSS_DIR)/bin/$(TRIPLET)-gcc
+DEPS_DIR       := $(CURDIR)/deps
+TRIPLET        := $(patsubst %-cross,%,$(TOOLCHAIN_NAME))
+CROSS_URL      := https://musl.cc/$(TOOLCHAIN_NAME).tgz
+CROSS_TGZ      := $(DEPS_DIR)/$(notdir $(CROSS_URL))
+CROSS_DIR      := $(DEPS_DIR)/$(TOOLCHAIN_NAME)
+TOOLCHAIN_GCC  := $(CROSS_DIR)/bin/$(TRIPLET)-gcc
 
-LIBPCAP_VER   := 1.10.5
-LIBPCAP_BASE  := libpcap-$(LIBPCAP_VER)
-LIBPCAP_URL   := https://www.tcpdump.org/release/$(LIBPCAP_BASE).tar.xz
-LIBPCAP_XZ    := $(notdir $(LIBPCAP_URL))
-LIBPCAP_DIR   := $(CURDIR)/$(LIBPCAP_BASE)
-INSTALL_DIR   := $(LIBPCAP_DIR)/install
+LIBPCAP_VER    := 1.10.5
+LIBPCAP_BASE   := libpcap-$(LIBPCAP_VER)
+LIBPCAP_URL    := https://www.tcpdump.org/release/$(LIBPCAP_BASE).tar.xz
+LIBPCAP_XZ     := $(DEPS_DIR)/$(notdir $(LIBPCAP_URL))
+LIBPCAP_DIR    := $(DEPS_DIR)/$(LIBPCAP_BASE)
+INSTALL_DIR    := $(LIBPCAP_DIR)/install
 
 all: toolchain libpcap zzz
 
-toolchain: $(CROSS_TGZ) $(CROSS_DIR)
-$(CROSS_TGZ):
-	@echo "→ Downloading $@"
+$(DEPS_DIR):
+	@mkdir -p $@
+
+$(CROSS_TGZ): | $(DEPS_DIR)
+	@echo "→ Downloading $(notdir $@)"
 	curl -L -o $@ $(CROSS_URL)
 
-$(CROSS_DIR):
-	@echo "→ Extracting $(CROSS_TGZ)"
-	tar -xzf $(CROSS_TGZ)
+$(CROSS_DIR): $(CROSS_TGZ)
+	@echo "→ Extracting $(notdir $(CROSS_TGZ)) to $(DEPS_DIR)"
+	tar -xzf $(CROSS_TGZ) -C $(DEPS_DIR)
 
-libpcap: $(LIBPCAP_XZ) $(LIBPCAP_DIR)
-$(LIBPCAP_XZ):
-	@echo "→ Downloading $@"
+toolchain: $(CROSS_TGZ) $(CROSS_DIR)
+
+$(LIBPCAP_XZ): | $(DEPS_DIR)
+	@echo "→ Downloading $(notdir $@)"
 	curl -L -o $@ $(LIBPCAP_URL)
 
-$(LIBPCAP_DIR):
-	@echo "→ Extracting $(LIBPCAP_XZ)"
-	tar -xf $(LIBPCAP_XZ)
+$(LIBPCAP_DIR): $(LIBPCAP_XZ)
+	@echo "→ Extracting $(notdir $(LIBPCAP_XZ))"
+	tar -xf $(LIBPCAP_XZ) -C $(DEPS_DIR)
 
 $(INSTALL_DIR): $(LIBPCAP_DIR)
 	@echo "→ Building libpcap for $(TRIPLET)"
@@ -65,18 +69,10 @@ $(INSTALL_DIR): $(LIBPCAP_DIR)
 libpcap: $(INSTALL_DIR)
 
 zzz:
-	@if [ -d zzz ]; then \
-	  echo "→ Updating zzz repository"; \
-	  git -C zzz pull; \
-	else \
-	  echo "→ Cloning zzz repository"; \
-	  git clone https://github.com/diredocks/zzz.git; \
-	fi
 	@echo "→ Building zzz for $(TRIPLET)"
-	cd zzz && \
 	PKG_CONFIG_LIBDIR=$(INSTALL_DIR)/lib/pkgconfig \
 	cmake -B build-$(TRIPLET) -S . -DCMAKE_C_COMPILER=$(TOOLCHAIN_GCC) && \
 	cd build-$(TRIPLET) && make
 
 clean:
-	rm -rf $(CROSS_TGZ) $(CROSS_DIR) $(LIBPCAP_XZ) $(LIBPCAP_DIR) zzz
+	rm -rf $(DEPS_DIR) $(LIBPCAP_DIR) build-$(TRIPLET)
