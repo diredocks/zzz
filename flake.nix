@@ -1,46 +1,48 @@
 {
-  description = "d3z";
+  description = "sleepy 802.1x client";
 
-  inputs.nixpkgs.url =  "github:NixOS/nixpkgs/nixos-unstable";
-
-  outputs = {
-    self,
-    nixpkgs,
-  }: let
-    supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-    forEachSupportedSystem = f:
-      nixpkgs.lib.genAttrs supportedSystems (system:
-        f {
-          pkgs = import nixpkgs {inherit system;};
-        });
-  in {
-    devShells = forEachSupportedSystem ({pkgs}: {
-      default =
-        pkgs.mkShell.override
-        {
-          # Override stdenv in order to change compiler:
-          # stdenv = pkgs.clangStdenv;
-        }
-        {
-          shellHook = ''
-            export SHELL=$(which zsh)
-          '';
-          packages = with pkgs;
-            [
-              libpcap
-              # ^ of couse we need it
-              pkg-config
-              clang-tools
-              cmake
-              codespell
-              cppcheck
-            ]
-            ++ (
-              if system == "aarch64-darwin"
-              then []
-              else [gdb]
-            );
-        };
-    });
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
   };
+
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      {
+        packages.default = pkgs.stdenv.mkDerivation rec {
+          pname = "zzz";
+          version = "0.1.0";
+
+          src = ./.;
+
+          nativeBuildInputs = with pkgs; [
+            cmake
+            pkg-config
+          ];
+
+          buildInputs = with pkgs; [
+            libpcap
+          ];
+
+          meta = with pkgs.lib; {
+            description = "sleepy 802.1x client";
+            homepage = "https://github.com/diredocks/zzz";
+          };
+        };
+
+        devShells.default = pkgs.mkShell {
+          inputsFrom = [ self.packages.${system}.default ];
+          
+          buildInputs = with pkgs; [
+            gdb
+            valgrind
+            clang-tools
+            bear
+          ];
+        };
+      }
+    );
 }
