@@ -38,6 +38,7 @@
           inputsFrom = [ self.packages.${system}.default ];
           
           buildInputs = with pkgs; [
+            zig
             gdb
             valgrind
             clang-tools
