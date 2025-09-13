@@ -9,15 +9,14 @@ You'll need required tools to build it:
 ```shell
 # Ubuntu/Debian
 sudo apt update
-sudo apt install cmake gcc libpcap-dev
+sudo apt install meson pkg-config gcc libpcap-dev
 # Fedora/RHEL
-sudo dnf install cmake gcc libpcap-devel
+sudo dnf install meson pkg-config gcc libpcap-devel
 ```
 In project directory:
 ```shell
-cmake -B build .
-cd build
-make
+meson setup build
+meson compile -C build
 ```
 
 ## Todo
