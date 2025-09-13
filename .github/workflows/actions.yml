@@ -40,6 +40,12 @@ jobs:
       - name: Setup Zig Compiler
         uses: mlugg/setup-zig@v2.0.5
 
+      - name: Disable initramfs update
+        run: sudo sed -i 's/yes/no/g' /etc/initramfs-tools/update-initramfs.conf
+
+      - name: Disable man-db update
+        run: sudo rm -f /var/lib/man-db/auto-update
+
       - name: Install Dependencies
         run: sudo apt update && sudo apt install -y build-essential pkg-config wget tar ninja-build
 
