@@ -52,6 +52,7 @@ jobs:
 
       - name: Build for ${{ matrix.system }}
         run: |
+          export PKG_CONFIG_LIBDIR=$(pwd)/libpcap-1.10.5/lib/pkgconfig
           meson setup build-${{ matrix.system }} --cross-file cross/${{ matrix.system }}.toml
           cd build-${{ matrix.system }}
           meson compile
