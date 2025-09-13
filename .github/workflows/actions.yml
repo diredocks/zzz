@@ -24,6 +24,8 @@ jobs:
           - riscv64-linux-musl
           - x86-linux-gnu
           - x86-linux-musl
+          - x86_64-linux-gnu
+          - x86_64-linux-musl
     
     steps:
       - name: Checkout
