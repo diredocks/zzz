@@ -14,12 +14,13 @@
       {
         packages.default = pkgs.stdenv.mkDerivation rec {
           pname = "zzz";
-          version = "0.1.0";
+          version = "0.1.1";
 
           src = ./.;
 
           nativeBuildInputs = with pkgs; [
-            cmake
+            meson
+            ninja
             pkg-config
           ];
 
