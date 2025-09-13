@@ -5,6 +5,7 @@ ar = ['zig', 'ar']
 ranlib = ['zig', 'ranlib']
 lib = ['zig', 'lib']
 dlltool = ['zig', 'dlltool']
+pkg-config = 'pkg-config'
 
 [host_machine]
 system = 'linux'
