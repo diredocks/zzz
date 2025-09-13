@@ -1,0 +1,18 @@
+[binaries]
+c = ['zig', 'cc']
+cpp = ['zig', 'c++']
+ar = ['zig', 'ar']
+ranlib = ['zig', 'ranlib']
+lib = ['zig', 'lib']
+dlltool = ['zig', 'dlltool']
+pkg-config = 'pkg-config'
+
+[host_machine]
+system = 'linux'
+cpu_family = 'arm'
+cpu = 'arm'
+endian = 'little'
+
+[built-in options]
+c_args = ['-target', 'arm-linux-musleabihf']
+c_link_args = ['-target', 'arm-linux-musleabihf']
