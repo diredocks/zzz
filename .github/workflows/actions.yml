@@ -46,7 +46,7 @@ jobs:
           CC="zig cc -target ${{ matrix.system }}" \
           AR="zig ar" \
           RANLIB="zig ranlib" \
-          ./configure --with-pcap=linux --prefix=$(pwd)
+          ./configure --host=x86_64-linux --with-pcap=linux --prefix=$(pwd)
           make -j$(nproc)
           make install
 
