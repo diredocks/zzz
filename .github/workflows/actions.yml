@@ -32,8 +32,8 @@ jobs:
       - name: Install Meson
         run: pip install --user meson
 
-      - name: Install Zig
-        uses: ziglang/setup-zig@v0.10
+      - name: Setup Zig Compiler
+        uses: mlugg/setup-zig@v2.0.5
 
       - name: Install Dependencies
         run: sudo apt update && sudo apt install -y build-essential pkg-config wget tar ninja
