@@ -1,68 +1,65 @@
-#ifndef PACKET_H
-#define PACKET_H
+#ifndef ZZZ_PACKET_H
+#define ZZZ_PACKET_H
 
+#include <stddef.h>
 #include <stdint.h>
 
-#define HARDWARE_ADDR_SIZE 6
-#define HARDWARE_ADDR_STR "%02x:%02x:%02x:%02x:%02x:%02x"
-#define HARDWARE_ADDR_FMT(mac)                                                 \
-  (mac)[0], (mac)[1], (mac)[2], (mac)[3], (mac)[4], (mac)[5]
+#define ETHERNET_MAX_SIZE 1512
+#define ETH_P_PAE 0x888e
 
-#define IP_ADDR_SIZE 15
-#define IP_DEFAULT "127.0.0.1"
+typedef enum _eap_code {
+  EAP_REQUEST = 1,
+  EAP_RESPONSE,
+  EAP_SUCCESS,
+  EAP_FAILURE,
+  EAP_H3C = 0x0a
+} EapCode;
 
-#define ETHERNET_HEADER_SIZE 14
-#define ETHERNET_TYPE_EAPOL 0x888E
-#define ETHERNET_FRAME_MIN_SIZE 64
-#define CRC_SIZE 4
+typedef enum _eapol_type {
+  EAPOL_EAP = 0,
+  EAPOL_START,
+  EAPOL_LOGOFF,
+} EapolType;
 
-#define EAPOL_HEADER_SIZE 4
-#define EAPOL_VERSION 0x01
+typedef enum _eap_type {
+  EAP_IDENTITY = 1,
+  EAP_MD5_CHALLENGE = 4,
+  EAP_KICKOFF = 8,
+  EAP_MD5_FAILURE = 9,
+} EapType;
 
-#define EAPOL_TYPE_EAP 0x00
-#define EAPOL_TYPE_START 0x01
-#define EAPOL_TYPE_LOGOFF 0x02
+typedef struct _ethernet_header {
+  uint8_t dst_mac[6];
+  uint8_t src_mac[6];
+  uint8_t protocol[2];
+} EthernetHeader;
 
-#define EAP_HEADER_SIZE 4
-#define EAP_CODE_REQUESTS 0x01
-#define EAP_CODE_RESPONSE 0x02
-#define EAP_CODE_SUCCESS 0x03
-#define EAP_CODE_FAILURE 0x04
-#define EAP_CODE_H3C 0x0a
-#define EAP_TYPE_IDENTITY 0x01
-#define EAP_TYPE_MD5OTP 0x04
-#define EAP_TYPE_KICKOFF 0x08
-#define EAP_TYPE_MD5_FAILURE 0x09
+typedef struct _eapol_header {
+  uint8_t ver[1];
+  uint8_t type[1];
+  uint8_t len[2]; // 802.1Q will be preserved
+} EapolHeader;
 
-#define MD5_LENGTH 16
+typedef struct _eap_header {
+  uint8_t code[1];
+  uint8_t id[1];
+  uint8_t len[2];
+  uint8_t type[1];
+} EapHeader;
 
-// defined in packet.c to avoid conflict
-extern const uint8_t BOARDCAST_ADDR[];
-extern const uint8_t MULTICASR_ADDR[];
-extern const uint8_t PAYLOAD_VERSION_HEADER[2];
-extern const uint8_t PAYLOAD_PADDING_HEADER[2];
-extern const uint8_t PAYLOAD_IDENTITY_HEADER[2];
-extern const uint8_t PAYLOAD_IP_HEADER[2];
+typedef struct _packet_header {
+  EthernetHeader eth_hdr;
+  EapolHeader eapol_hdr;
+  EapHeader eap_hdr; // absent in EAPOL-Start and Logoff
+} PacketHeader;      // skip the 8021x header manually
 
-struct Packet {
-  // Ethernet
-  uint8_t dst_mac[HARDWARE_ADDR_SIZE];
-  uint8_t src_mac[HARDWARE_ADDR_SIZE];
-  uint16_t ether_type;
-  // EAPOL
-  uint8_t version;
-  uint8_t eapol_type;
-  uint16_t eapol_length; // in network byte order
-  // EAP
-  uint8_t eap_code;
-  uint8_t eap_id;
-  uint16_t eap_length; // in network byte order
-  // EAP Data
-  uint8_t eap_type;
-  uint8_t eap_type_data[];
-} __attribute__((__packed__));
+typedef struct _packet {
+  size_t actual_len; // effective length of data in buffer
+  size_t buffer_len; // current buffer length, do not write more than this
+  union {
+    uint8_t *content;
+    PacketHeader *header;
+  };
+} Packet;
 
-extern struct Packet g_default_packet;
-void packet_init_default();
-
-#endif // PACKET_H
+#endif // !ZZZ_PACKET_H

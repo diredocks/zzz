@@ -1,14 +1,21 @@
-#ifndef CONF_H
-#define CONF_H
+#ifndef ZZZ_CONF_H
+#define ZZZ_CONF_H
 
-struct Config {
-  const char *username;
-  const char *password;
-  const char *device;
-};
+#include "utils/common.h"
 
-extern struct Config g_config;
+typedef struct _auth_config {
+  char *username;
+  char *password;
+} AuthConfig;
 
-void config_init(const char *path);
+typedef struct _app_config {
+  char *interface;
+} AppConfig;
 
-#endif
+Result config_init(const char *path);
+void config_free();
+
+AuthConfig *config_auth_get();
+AppConfig *config_app_get();
+
+#endif // !ZZZ_CONF_H

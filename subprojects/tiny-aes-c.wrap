@@ -1,0 +1,5 @@
+[wrap-git]
+url = https://github.com/kokke/tiny-AES-c.git
+revision = 23856752fbd139da0b8ca6e471a13d5bcc99a08d
+depth = 1
+patch_directory = tiny-aes-c

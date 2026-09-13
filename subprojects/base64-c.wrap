@@ -1,0 +1,5 @@
+[wrap-git]
+url = https://github.com/joedf/base64.c.git
+revision = a34c176492f6e0395393d0a5cd264bf9df74dc77
+depth = 1
+patch_directory = base64-c

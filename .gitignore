@@ -3,3 +3,7 @@ result
 deps
 compile_commands.json
 .cache
+/subprojects/*
+!/subprojects/*.wrap
+!/subprojects/packagefiles/
+!/subprojects/packagefiles/**

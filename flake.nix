@@ -14,7 +14,7 @@
       {
         packages.default = pkgs.stdenv.mkDerivation rec {
           pname = "zzz";
-          version = "0.1.1";
+          version = "0.2.0";
 
           src = ./.;
 
@@ -26,6 +26,8 @@
 
           buildInputs = with pkgs; [
             libpcap
+            libevent
+            inih
           ];
 
           meta = with pkgs.lib; {
@@ -38,7 +40,6 @@
           inputsFrom = [ self.packages.${system}.default ];
           
           buildInputs = with pkgs; [
-            zig
             gdb
             valgrind
             clang-tools

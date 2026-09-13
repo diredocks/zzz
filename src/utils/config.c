@@ -1,11 +1,13 @@
 #include "utils/config.h"
-#include "utils/ini.h"
-#include "utils/log.h"
+#include "utils/common.h"
+#include "utils/misc.h"
 
+#include <ini.h>
 #include <stdlib.h>
 #include <string.h>
 
-struct Config g_config;
+static AuthConfig g_auth_config = {0};
+static AppConfig g_app_config = {0};
 
 static int hex_char_to_val(char c) {
   if ('0' <= c && c <= '9')
@@ -39,31 +41,46 @@ static void unescape_string(char *str) {
   *dst = '\0';
 }
 
-static int config_handler(void *user, const char *section, const char *name,
-                          const char *value) {
-#define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
+static Result config_handler(void *_user, const char *section, const char *name,
+                             const char *value) {
   char *copy = strdup(value);
   if (!copy)
-    return 0;
+    return FAIL;
   unescape_string(copy);
 
+#define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
   if (MATCH("auth", "username")) {
-    g_config.username = copy;
+    g_auth_config.username = copy;
   } else if (MATCH("auth", "password")) {
-    g_config.password = copy;
-  } else if (MATCH("auth", "device")) {
-    g_config.device = copy;
+    g_auth_config.password = copy;
+  } else if (MATCH("app", "interface")) {
+    g_app_config.interface = copy;
   } else {
     free(copy);
-    return 0; // unknown section/key
+    return FAIL; // unknown section / key
   }
 
-  return 1;
+  return SUCC;
 }
 
-void config_init(const char *path) {
-  if (ini_parse(path, config_handler, &g_config) < 0) {
-    log_error("can't parse config from given path", NULL);
-    exit(EXIT_FAILURE);
+Result config_init(const char *path) {
+  if (ini_parse(path, config_handler, NULL) < 0) {
+    return FAIL; // failed to parse config
   }
+
+  if (g_auth_config.username == NULL || g_auth_config.password == NULL ||
+      g_app_config.interface == NULL) {
+    return FAIL; // not all required fields are set
+  }
+
+  return SUCC;
 }
+
+void config_free() {
+  free_ptr(&g_auth_config.username);
+  free_ptr(&g_auth_config.password);
+  free_ptr(&g_app_config.interface);
+}
+
+AuthConfig *config_auth_get() { return &g_auth_config; }
+AppConfig *config_app_get() { return &g_app_config; }

@@ -1,0 +1,5 @@
+[wrap-git]
+url = https://github.com/Zunawe/md5-c.git
+revision = f3529b666b7ae8b80b0a9fa88ac2a91b389909c7
+depth = 1
+patch_directory = md5-c
