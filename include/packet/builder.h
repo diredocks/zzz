@@ -1,5 +1,5 @@
-#ifndef NYNG_PACKET_BUILDER_H
-#define NYNG_PACKET_BUILDER_H
+#ifndef ZZZ_PACKET_BUILDER_H
+#define ZZZ_PACKET_BUILDER_H
 
 #include "packet/packet.h"
 #include "utils/config.h"
@@ -33,4 +33,4 @@ typedef struct _packet_builder {
 PacketBuilder *packet_builder_get();
 void free_packet_builder();
 
-#endif // !NYNG_PACKET_BUILDER_H
+#endif // !ZZZ_PACKET_BUILDER_H
