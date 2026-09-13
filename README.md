@@ -28,13 +28,14 @@ meson compile -C build
 ## Credit
 
 Inspired by:
-- [bitdust/njit8021xclient](https://github.com/bitdust/njit8021xclient)
 - [diredocks/nyn](https://github.com/diredocks/nyn)
+- [updateing/minieap](https://github.com/updateing/minieap)
+- [bitdust/njit8021xclient](https://github.com/bitdust/njit8021xclient)
 
-Third Party Code used in this project:
+Third party library used in this project:
 - [benhoyt/inih](https://github.com/benhoyt/inih)
 - [Zunawe/md5-c](https://github.com/Zunawe/md5-c)
+- [joedf/base64.c](https://github.com/joedf/base64.c)
 - [kokke/tiny-AES-c](https://github.com/kokke/tiny-AES-c)
-- [Base64 Encode and Decode in C](https://nachtimwald.com/2017/11/18/base64-encode-and-decode-in-c/)
 
 > Crafted with love and a touch of C wizardry. 🪄❤️
