@@ -1,0 +1,4 @@
+#ifndef ZZZ_PACKET_PLUGIN_H
+#define ZZZ_PACKET_PLUGIN_H
+
+#endif // !ZZZ_PACKET_PLUGIN_H
