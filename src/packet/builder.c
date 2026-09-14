@@ -162,22 +162,22 @@ PacketBuilder *packet_builder_new() {
 }
 
 PacketBuilder *packet_builder_get() {
-  if (g_builder == NULL) {
-    g_builder = packet_builder_new();
+  if (g_builder != NULL)
+    return g_builder;
 
-    if (g_builder == NULL) {
-      log_errorf("failed to allocate memory for packet builder");
-      exit(EXIT_FAILURE);
-    }
+  g_builder = packet_builder_new();
+  if (g_builder == NULL) {
+    log_errorf("failed to allocate memory for packet builder");
+    exit(EXIT_FAILURE);
   }
 
   return g_builder;
 }
 
 void packet_builder_free() {
-  if (g_builder) {
-    free_ptr(&((PacketBuilderPriv *)g_builder->priv)->md5_seed);
-    free_ptr(&g_builder->priv);
-    free_ptr(&g_builder);
-  }
+  if (g_builder == NULL)
+    return;
+  free_ptr(&((PacketBuilderPriv *)g_builder->priv)->md5_seed);
+  free_ptr(&g_builder->priv);
+  free_ptr(&g_builder);
 }

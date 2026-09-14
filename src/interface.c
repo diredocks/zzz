@@ -29,16 +29,20 @@ Result interface_init() {
 }
 
 Interface *interface_get() {
-  if (g_interface == NULL) {
-    g_interface = pcap_new(); // TODO: bpf / raw_socket
+  if (g_interface != NULL)
+    return g_interface;
 
-    if (g_interface == NULL) {
-      log_errorf("failed to allocate memory for interface");
-      exit(EXIT_FAILURE);
-    }
+  g_interface = pcap_new(); // TODO: bpf / raw_socket
+  if (g_interface == NULL) {
+    log_errorf("failed to allocate memory for interface");
+    exit(EXIT_FAILURE);
   }
 
   return g_interface;
 }
 
-void interface_free() { g_interface->free(g_interface); }
+void interface_free() {
+  if (g_interface == NULL)
+    return;
+  g_interface->free(g_interface);
+}

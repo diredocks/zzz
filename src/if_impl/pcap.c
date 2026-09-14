@@ -95,9 +95,8 @@ static Result stop_capture(Interface *this) {
   if (PRIV->dev) {
     pcap_breakloop(PRIV->dev);
     return SUCC;
-  } else {
-    return FAIL;
   }
+  return FAIL;
 }
 
 static Result send_packet(Interface *this, Packet *packet) {
