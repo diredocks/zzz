@@ -177,6 +177,7 @@ PacketBuilder *packet_builder_get() {
 void packet_builder_free() {
   if (g_builder == NULL)
     return;
+
   free_ptr(&((PacketBuilderPriv *)g_builder->priv)->md5_seed);
   free_ptr(&g_builder->priv);
   free_ptr(&g_builder);

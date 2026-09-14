@@ -44,5 +44,6 @@ Interface *interface_get() {
 void interface_free() {
   if (g_interface == NULL)
     return;
+
   g_interface->free(g_interface);
 }
